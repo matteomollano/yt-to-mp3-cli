@@ -2,19 +2,19 @@ import urllib.request, eyed3, mimetypes
 from eyed3.id3.frames import ImageFrame
 from PIL import Image
 
-def downloadThumbnail(thumbnail_url: str):
+def download_thumbnail(thumbnail_url: str):
     """Downloads a youtube video's thumbnail as a jpg
 
     Args:
         thumbnail_url (str): a link to a youtube video's thumbnail
-        Ex: https://img.youtube.com/vi/{videoID}/maxresdefault.jpg
-        where videoID is the ID string associated with a given youtube video
+        Ex: https://i.ytimg.com/vi/{video_id}/maxresdefault.jpg
+        where video_id is the ID string associated with a given youtube video
     """
     
     urllib.request.urlretrieve(thumbnail_url, "thumbnail.jpg")
+
     
-    
-def makeSquare(thumbnail_filename: str):
+def make_square(thumbnail_filename: str):
     """Creates a new square thumbnail to be used for album cover art
        (crops a regular sized youtube thumbnail)
 
@@ -22,24 +22,24 @@ def makeSquare(thumbnail_filename: str):
         thumbnail_filename (str): filename/filepath to a youtube thumbnail
     """
     
-    # Open the original thumbnail file
+    # open the original thumbnail file
     original_image = Image.open(thumbnail_filename)
 
-    # Calculate the size for the square thumbnail
+    # calculate the size for the square thumbnail
     thumbnail_size = min(original_image.size)
 
-    # Crop the center portion to create a square thumbnail
+    # crop the center portion to create a square thumbnail
     left = (original_image.width - thumbnail_size) // 2
     top = (original_image.height - thumbnail_size) // 2
     right = left + thumbnail_size
     bottom = top + thumbnail_size
     square_thumbnail = original_image.crop((left, top, right, bottom))
     
-    # Save the square thumbnail
-    square_thumbnail.save('square_thumbnail.jpg')
+    # save the square thumbnail
+    square_thumbnail.save("square_thumbnail.jpg")
     
 
-def addThumbnail(filename: str):
+def add_thumbnail(filename: str):
     """Adds YouTube thumbnail as cover art to an mp3 file
 
     Args:
@@ -49,7 +49,7 @@ def addThumbnail(filename: str):
     audiofile = eyed3.load(filename)
     print(audiofile)
     
-    makeSquare(thumbnail_filename='thumbnail.jpg')
+    make_square(thumbnail_filename="thumbnail.jpg")
     
     if audiofile.tag is None:
         audiofile.initTag()
@@ -58,13 +58,13 @@ def addThumbnail(filename: str):
         audiofile.tag.images.set(
             ImageFrame.FRONT_COVER, # 3 is the code for front cover art
             img_file.read(), # open the binary data of the cover art
-            'image/jpeg' # mime type of the file
+            "image/jpeg" # mime type of the file
         )
         
     audiofile.tag.save()
     
 
-def addCustomCoverArt(mp3_filename: str, art_filename: str):
+def add_custom_coverArt(mp3_filename: str, art_filename: str):
     """Adds a custom cover art to an mp3 file
 
     Args:
