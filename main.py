@@ -1,9 +1,9 @@
-from download import downloadSong
+from download import download_song
 
 if __name__ == '__main__':
  
     youtube_url = input("Enter YouTube URL for song download: ")
-    song = input("Enter song name: ")
+    title = input("Enter song title: ")
     artist = input("Enter artist name: ")
     
-    downloadSong(youtube_url, song, artist)
+    download_song(youtube_url, title, artist)
