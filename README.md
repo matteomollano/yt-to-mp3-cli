@@ -3,8 +3,7 @@
 This project is a Python command line interface that allows you to download songs from YouTube. <br> <br>
 
 ## How it works:
-- Downloads a YouTube video as an mp4 file
-- Converts the mp4 to an mp3 file via ffmpeg
+- Downloads a YouTube video as an mp3 file using yt-dlp library
 - Updates the mp3 with additional metadata including title, artist, and cover art
 <br> <br>
 
@@ -56,7 +55,7 @@ pip3 install -r requirements.txt
 python3 main.py
 ```
 
-6. Enter the YouTube URL, song name, and artist name for the song that you want to download <br>
+6. Enter the YouTube URL, song title, and artist name for the song that you want to download <br>
 ```
 The song will now download as an mp3 in your current directory!
 ```

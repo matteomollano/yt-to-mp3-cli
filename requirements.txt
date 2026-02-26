@@ -1,3 +1,4 @@
+certifi==2026.2.25
 coverage==7.13.4
 deprecation==2.1.0
 eyeD3==0.9.9
@@ -11,3 +12,4 @@ pytube==15.0.0
 questionary==2.1.1
 toml==0.10.2
 wcwidth==0.6.0
+yt-dlp==2026.2.21
