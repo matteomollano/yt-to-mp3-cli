@@ -1,6 +1,11 @@
 import eyed3
 
 def display_properties(filepath: str):
+    """Displays the metadata properties of an mp3 file
+
+    Args:
+        filepath (str): the filepath of the mp3 file
+    """
     audio_file = eyed3.load(filepath)
     print(f"Title: {audio_file.tag.title}")
     print(f"Artist: {audio_file.tag.artist}")
@@ -9,6 +14,15 @@ def display_properties(filepath: str):
     
     
 def add_metadata(filepath: str, title: str, artist: str, genre: str, album: str):
+    """Adds or updates metadata for an mp3 file
+
+    Args:
+        filepath (str): the filepath of the mp3 file
+        title (str): the title to set
+        artist (str): the artist to set
+        genre (str): the genre to set
+        album (str): the album to set
+    """
     audio_file = eyed3.load(filepath)
     audio_file.tag.title = title
     audio_file.tag.artist = artist
