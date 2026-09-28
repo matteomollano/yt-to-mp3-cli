@@ -1,6 +1,5 @@
-import urllib.request, eyed3, mimetypes
+import eyed3, requests
 from eyed3.id3.frames import ImageFrame
-from PIL import Image
 
 def download_thumbnail(thumbnail_url: str):
     """Downloads a youtube video's thumbnail as a jpg
@@ -9,85 +8,47 @@ def download_thumbnail(thumbnail_url: str):
         thumbnail_url (str): a link to a youtube video's thumbnail
         Ex: https://i.ytimg.com/vi/{video_id}/maxresdefault.jpg
         where video_id is the ID string associated with a given youtube video
+
+    Returns:
+        str: path of the downloaded thumbnail file, or None if the download fails
     """
-    
-    urllib.request.urlretrieve(thumbnail_url, "thumbnail.jpg")
 
-    
-def make_square(thumbnail_filename: str):
-    """Creates a new square thumbnail to be used for album cover art
-       (crops a regular sized youtube thumbnail)
+    thumbnail_path = "thumbnail.jpg"
 
-    Args:
-        thumbnail_filename (str): filename/filepath to a youtube thumbnail
-    """
-    
-    # open the original thumbnail file
-    original_image = Image.open(thumbnail_filename)
+    try:
+        response = requests.get(thumbnail_url, timeout=30)
+        response.raise_for_status()
+        with open(thumbnail_path, "wb") as thumbnail_file:
+            thumbnail_file.write(response.content)
+    except Exception as e:
+        print(f"Failed to download video thumbnail with error: {e}")
+        return None
 
-    # calculate the size for the square thumbnail
-    thumbnail_size = min(original_image.size)
+    return thumbnail_path
 
-    # crop the center portion to create a square thumbnail
-    left = (original_image.width - thumbnail_size) // 2
-    top = (original_image.height - thumbnail_size) // 2
-    right = left + thumbnail_size
-    bottom = top + thumbnail_size
-    square_thumbnail = original_image.crop((left, top, right, bottom))
-    
-    # save the square thumbnail
-    square_thumbnail.save("square_thumbnail.jpg")
-    
 
-def add_thumbnail(filename: str):
+def add_thumbnail(mp3_path: str, thumbnail_path: str):
     """Adds YouTube thumbnail as cover art to an mp3 file
 
     Args:
-        filename (str): filename/filepath of the mp3 file
+        mp3_path (str): file path of the mp3 file
+        thumbnail_path (str): file path of the youtube thumbnail jpg
     """
-    
-    audiofile = eyed3.load(filename)
-    print(audiofile)
-    
-    make_square(thumbnail_filename="thumbnail.jpg")
-    
-    if audiofile.tag is None:
-        audiofile.initTag()
-        
-    with open ("square_thumbnail.jpg", "rb") as img_file:
-        audiofile.tag.images.set(
-            ImageFrame.FRONT_COVER, # 3 is the code for front cover art
-            img_file.read(), # open the binary data of the cover art
-            "image/jpeg" # mime type of the file
-        )
-        
-    audiofile.tag.save()
-    
 
-def add_custom_coverArt(mp3_filename: str, art_filename: str):
-    """Adds a custom cover art to an mp3 file
+    try:
+        audiofile = eyed3.load(mp3_path)
 
-    Args:
-        mp3_filename (str): filename/filepath of the mp3
-        art_filename (str): filename/filepath of the cover art image
-    """
-    
-    audiofile = eyed3.load(mp3_filename)
-    print(audiofile)
-    
-    if audiofile.tag is None:
-        audiofile.initTag()
-        
-    with open (art_filename, "rb") as img_file:
-        mime_type, _ = mimetypes.guess_type(art_filename)
-        if mime_type:
+        if audiofile.tag is None:
+            audiofile.initTag()
+
+        with open(thumbnail_path, "rb") as img_file:
             audiofile.tag.images.set(
-                ImageFrame.FRONT_COVER,
-                img_file.read(),
-                mime_type
+                ImageFrame.FRONT_COVER, # 3 is the code for front cover art
+                img_file.read(),        # open the binary data of the cover art
+                "image/jpeg"            # mime type of the file
             )
-        else:
-            print(f"Warning: Could not determine MIME type for {art_filename}")
-            print("Cover art was not added")
-        
-    audiofile.tag.save()
+
+        audiofile.tag.save()
+        print("Cover art added successfully")
+    except Exception as error:
+        print(f"Failed to add cover art: {error}")
