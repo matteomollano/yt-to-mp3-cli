@@ -1,0 +1,10 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace    # trims trailing whitespace
+      - id: end-of-file-fixer      # ensures files end with newline
+      - id: check-yaml             # validates YAML syntax
+      - id: requirements-txt-fixer # sorts requirements.txt alphabetically
+      - id: mixed-line-ending      # forces consistent line endings
+        args: ['--fix=lf']         # forces Unix 'LF' line endings
